@@ -4,6 +4,7 @@ var renderer = PIXI.autoDetectRenderer(600,600, {BackgroundColor: 0x3344ee});
 gameport.appendChild(renderer.view);
 
 var stage = new PIXI.Container();
+PIXI.loader.add("assets.json").load(ready);
 // load in the image
 var start_button = PIXI.Texture.fromImage("start_button.png");
 var ship = PIXI.Texture.fromImage("ship.png");
@@ -17,13 +18,28 @@ var player = new PIXI.Sprite(ship);
 var stars= new PIXI.Sprite(background)
 
 var current_screen = new PIXI.Container();
+var still= new PIXI.Sprite(PIXI.Texture.fromFrame('ship_sprite_sheet1'));
+var moving= new PIXI.Sprite(PIXI.Texture.fromFrame('ship_sprite_sheet2'));
+player = still;
 scene2.addChild(stars);
 scene1.addChild(button);
 scene2.addChild(player);
 stage.addChild(scene1);
 stage.addChild(scene2);
-scene2.visible=true;
 current_screen = scene1;
+function change_ship()
+{
+ var frames = [];
+  for(var i = 1; i<=2; i++)
+    frames.push(PIXI.Texture.fromFrame('ship_sprite_sheet'+i+'.png'));
+  }
+flying= new PIXI.extras.MovieClip(frames);
+flying.position.x = player.position.x;
+flying.position.y = player.position.y;
+flying.animationSpeed = 0.1;
+flying.play();
+stage.addChild(flying);
+}
 function mouseHandler(e)
 {
   current_screen = scene2;
@@ -34,8 +50,9 @@ function mouseHandler2(e)
 {
   var xpos = e.clientX -20 ;
   var ypos = e.clientY +80;
+  change_ship();
   createjs.Tween.get(player.position).to({x: xpos, y:ypos}, 1000);
-
+  change_ship();
 }
 var timertext = new PIXI.Text('60');
 
